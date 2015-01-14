@@ -1,8 +1,15 @@
-#include <node.h>
-#include "nan.h"
+/*********************************************************************
+ * NAN - Native Abstractions for Node.js
+ *
+ * Copyright (c) 2014 NAN contributors
+ *
+ * MIT License <https://github.com/rvagg/nan/blob/master/LICENSE.md>
+ ********************************************************************/
+
+#include <nan.h>
 
 NAN_METHOD(ReturnString) {
   NanScope();
-
-  NanReturnValue(v8::String::New(NanFromV8String(args[0])));
+  v8::Local<v8::String> s = NanNew<v8::String>(*NanUtf8String(args[0]));
+  NanReturnValue(s);
 }

@@ -1,15 +1,27 @@
+/*********************************************************************
+ * NAN - Native Abstractions for Node.js
+ *
+ * Copyright (c) 2014 NAN contributors
+ *
+ * MIT License <https://github.com/rvagg/nan/blob/master/LICENSE.md>
+ ********************************************************************/
+
 const test     = require('tap').test
-    , bindings = require('bindings');
+    , testRoot = require('path').resolve(__dirname, '..')
+    , bindings = require('bindings')({ module_root: testRoot, bindings: 'persistent' });
 
 test('persistent', function (t) {
-  t.plan(7)
+  t.plan(9)
 
-  var persistent = bindings('persistent')
+  var persistent = bindings;
   t.type(persistent.save1, 'function');
   t.type(persistent.get1, 'function');
   t.type(persistent.dispose1, 'function');
   t.type(persistent.toPersistentAndBackAgain, 'function');
+  t.type(persistent.persistentToPersistent, 'function');
   t.deepEqual(persistent.toPersistentAndBackAgain({ x: 42 }), { x: 42 });
+
+  t.ok(persistent.persistentToPersistent('any string') || true);
 
   persistent.save1('a string to save')
   t.equal(persistent.get1(), 'a string to save')

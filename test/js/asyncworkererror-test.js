@@ -8,22 +8,14 @@
 
 const test     = require('tap').test
     , testRoot = require('path').resolve(__dirname, '..')
-    , bindings = require('bindings')({ module_root: testRoot, bindings: 'asyncworker' });
+    , bindings = require('bindings')({ module_root: testRoot, bindings: 'asyncworkererror' });
 
-test('asyncworker', function (t) {
+test('asyncworkererror', function (t) {
   var worker = bindings.a
-    , ticks  = 0
-    , called = false
   t.type(worker, 'function')
-  function tick () {
-    ticks++
-    if (!called)
-      setTimeout(tick, 0)
-  }
-  setTimeout(tick, 0)
-  worker(200, function () {
-    called = true
-    t.ok(ticks > 6, 'got plenty of ticks! (' + ticks + ')')
+  worker(function (err) {
+    t.ok(err)
+    t.equal(err.message, 'Error')
     t.end()
   })
 })
