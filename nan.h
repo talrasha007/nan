@@ -500,10 +500,13 @@ NAN_INLINE v8::Local<T> _NanEnsureLocal(v8::Local<T> val) {
     return v8::String::NewExternal(v8::Isolate::GetCurrent(), resource);
   }
 
+/* Disabled for io.js */
+#if NODE_MODULE_VERSION < 42
   NAN_INLINE v8::Local<v8::String> NanNew(
       v8::String::ExternalAsciiStringResource *resource) {
     return v8::String::NewExternal(v8::Isolate::GetCurrent(), resource);
   }
+#endif
 
 # define NanScope() v8::HandleScope scope(v8::Isolate::GetCurrent())
 # define NanEscapableScope()                                                   \
@@ -2181,6 +2184,8 @@ static bool _NanGetExternalParts(
   assert(val->IsString());
   v8::Local<v8::String> str = NanNew(val.As<v8::String>());
 
+/* Disabled for io.js */
+#if NODE_MODULE_VERSION < 42
   if (str->IsExternalAscii()) {
     const v8::String::ExternalAsciiStringResource* ext;
     ext = str->GetExternalAsciiStringResource();
@@ -2188,7 +2193,9 @@ static bool _NanGetExternalParts(
     *len = ext->length();
     return true;
 
-  } else if (str->IsExternal()) {
+  } else
+#endif
+  if (str->IsExternal()) {
     const v8::String::ExternalStringResource* ext;
     ext = str->GetExternalStringResource();
     *data = reinterpret_cast<const char*>(ext->data());
